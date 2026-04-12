@@ -1,0 +1,211 @@
+// ─── calculations.js ──────────────────────────────────────────────────────────
+
+// ── Constante principal ──────────────────────────────────────────────────────
+export const PULL_COST = 160;
+
+// ── Derivações de tempo ──────────────────────────────────────────────────────
+
+// Modo legado: calcula apenas por número de dias (usado como fallback)
+export const calcEndgameCycles = (versionDays) => Math.max(1, Math.floor(versionDays / 14));
+export const calcWeeks = (versionDays) => Math.floor(versionDays / 7);
+
+// ── Calendário: conta segundas-feiras no intervalo [startDate, endDate) ──────
+// O DU/GdM reseta toda segunda-feira.
+// As versões do HSR começam na quarta-feira de madrugada.
+// startDate e endDate são strings "YYYY-MM-DD".
+export function calcMondaysInRange(startDateStr, endDateStr) {
+  const start = new Date(startDateStr + "T00:00:00");
+  const end   = new Date(endDateStr   + "T00:00:00");
+
+  if (isNaN(start) || isNaN(end) || end <= start) return 0;
+
+  let count = 0;
+  const cur = new Date(start);
+
+  // Avança até a primeira segunda-feira >= start
+  while (cur.getDay() !== 1) {
+    cur.setDate(cur.getDate() + 1);
+  }
+
+  // Conta cada segunda antes de end
+  while (cur < end) {
+    count++;
+    cur.setDate(cur.getDate() + 7);
+  }
+
+  return count;
+}
+
+// Conta ciclos de endgame (a cada 14 dias, mesmo que incompleto)
+// Com calendário: conta quantas "quintas-feiras de reinício" caem no intervalo.
+// Simplificação: um ciclo a cada 14 dias corridos a partir do início.
+export function calcEndgameCyclesFromDates(startDateStr, endDateStr) {
+  const start = new Date(startDateStr + "T00:00:00");
+  const end   = new Date(endDateStr   + "T00:00:00");
+
+  if (isNaN(start) || isNaN(end) || end <= start) return 1;
+
+  const diffDays = Math.round((end - start) / (1000 * 60 * 60 * 24));
+  return Math.max(1, Math.floor(diffDays / 14));
+}
+
+// Diferença em dias entre duas datas
+export function calcDaysBetween(startDateStr, endDateStr) {
+  const start = new Date(startDateStr + "T00:00:00");
+  const end   = new Date(endDateStr   + "T00:00:00");
+
+  if (isNaN(start) || isNaN(end) || end <= start) return 0;
+
+  return Math.round((end - start) / (1000 * 60 * 60 * 24));
+}
+
+// Retorna "YYYY-MM-DD" de hoje
+export function todayStr() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+// Retorna "YYYY-MM-DD" de hoje + N dias
+export function addDays(dateStr, n) {
+  const d = new Date(dateStr + "T00:00:00");
+  d.setDate(d.getDate() + n);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+// ── Cálculo principal de Jades ───────────────────────────────────────────────
+export function calcTotalJades({
+  versionDays,
+  dailyJades,
+  expressPass,
+  expressQty,
+  odyssey,
+
+  // ⭐ Endgames
+  mocStars,
+  pfStars,
+  apocStars,
+
+  // 💠 Passes e extras
+  battlePass,
+  bpMedal,
+  convertFragments,
+  initialJades,
+  initialPasses,
+  du,
+  customEvents,
+  anniversary,
+  anniversaryJades,
+  extraJades,
+  trialCount,
+  monthlyResets,
+  bonusPulls,
+  newCycleJades,
+  levelUpJades,
+
+  // 📅 Calendário (opcionais — se ausentes, usa versionDays)
+  startDate,
+  endDate,
+}) {
+  // Se tiver datas, usa lógica de calendário; senão, usa dias simples
+  const useCalendar = !!(startDate && endDate);
+
+  const days         = useCalendar ? calcDaysBetween(startDate, endDate) : versionDays;
+  const endgameCycles = useCalendar
+    ? calcEndgameCyclesFromDates(startDate, endDate)
+    : calcEndgameCycles(versionDays);
+  const weeks        = useCalendar
+    ? calcMondaysInRange(startDate, endDate)   // ciclos reais de DU
+    : calcWeeks(versionDays);
+
+  let total = 0;
+
+  total += initialJades;
+  total += initialPasses * PULL_COST;
+
+  // ── Base ──
+  total += dailyJades * days;
+
+  if (expressPass) total += 90 * 30 * expressQty;
+  if (odyssey)     total += 10 * PULL_COST;
+
+  // ── ⭐ ENDGAMES ──
+  total += calcMoCJades(mocStars);
+  total += calcPFJades(pfStars);
+  total += calcApocJades(apocStars);
+
+  // ── 💠 PASSES E CONVERSÃO ──
+  if (battlePass) total += 680 + (5 * PULL_COST);
+  if (bpMedal)    total += 200;
+  if (convertFragments) total += convertFragments;
+
+  // ── Outros ──
+  if (du) total += 225 * weeks;
+
+  customEvents.forEach(ev => { total += ev.jades; });
+
+  if (anniversary) total += anniversaryJades;
+
+  total += extraJades;
+  total += trialCount * 20;
+  total += monthlyResets * 5 * PULL_COST;
+  total += bonusPulls * PULL_COST;
+  total += newCycleJades;
+  total += levelUpJades;
+
+  return Math.floor(total);
+}
+
+// ── Conversão ────────────────────────────────────────────────────────────────
+export const jadesToPulls = (jades) => Math.floor(jades / PULL_COST);
+export const pullsToJades = (pulls) => pulls * PULL_COST;
+
+// ── Meta ─────────────────────────────────────────────────────────────────────
+export function calcGoalProgress(totalPulls, goalPulls) {
+  const hasGoal    = goalPulls > 0;
+  const goalMet    = hasGoal && totalPulls >= goalPulls;
+  const pullsNeeded = hasGoal ? Math.max(0, goalPulls - totalPulls) : 0;
+  const jadesNeeded = pullsNeeded * PULL_COST;
+  const progressPct = hasGoal ? Math.min(100, (totalPulls / goalPulls) * 100) : 0;
+  const surplus     = totalPulls - goalPulls;
+
+  return { hasGoal, goalMet, pullsNeeded, jadesNeeded, progressPct, surplus };
+}
+
+// ── Subtotais ────────────────────────────────────────────────────────────────
+export const subtotalDaily   = (dailyJades, versionDays) => dailyJades * versionDays;
+export const subtotalExpress = (expressQty) => 90 * 30 * expressQty;
+
+export const subtotalEndgamesStars = ({ mocStars, pfStars, apocStars }) =>
+  calcMoCJades(mocStars) + calcPFJades(pfStars) + calcApocJades(apocStars);
+
+// ── Cálculo individual ───────────────────────────────────────────────────────
+
+// Memory of Chaos (MoC)
+export function calcMoCJades(stars) {
+  if (stars < 0) return 0;
+  const stages = Math.floor(stars / 3);
+  let jades = 0;
+  for (let i = 1; i <= stages; i++) {
+    jades += i <= 8 ? 60 : 80;
+  }
+  return jades;
+}
+
+// Pure Fiction (PF)
+export function calcPFJades(stars) {
+  if (stars <= 0) return 0;
+  let jades = 0;
+  for (let i = 1; i <= stars; i++) {
+    jades += i <= 8 ? 60 : 80;
+  }
+  return jades;
+}
+
+// Apocalyptic Shadow — mesma lógica do PF
+export const calcApocJades = calcPFJades;

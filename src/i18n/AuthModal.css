@@ -1,0 +1,146 @@
+/* ─── AuthModal — estilos ─────────────────────────────────────────────────────
+   Cole no StellarMap.css ou importe separado.
+   Reutiliza .help-overlay e .help-modal do HelpModal.css — não precisa duplicar.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* ── Tamanho específico do modal de auth (mais compacto) ── */
+.auth-modal {
+  max-width: 400px;
+}
+
+/* ── Tabs ─────────────────────────────────────────────────────────────────── */
+.auth-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.auth-tab {
+  flex: 1;
+  padding: 13px 0;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--muted);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.18s, border-color 0.18s;
+  margin-bottom: -1px;
+}
+
+.auth-tab:hover {
+  color: var(--text);
+}
+
+.auth-tab.active {
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+}
+
+/* ── Corpo do form ───────────────────────────────────────────────────────── */
+.auth-body {
+  padding: 22px 22px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Campo ───────────────────────────────────────────────────────────────── */
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.auth-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.auth-hint {
+  font-size: 11px;
+  letter-spacing: 1px;
+  margin-top: 3px;
+  transition: color 0.2s;
+}
+
+/* ── Campo de senha com olho ─────────────────────────────────────────────── */
+.auth-pwd-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.auth-pwd-wrap .finput {
+  padding-right: 42px;
+}
+
+.auth-eye {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 2px;
+  opacity: 0.55;
+  transition: opacity 0.15s;
+  color: inherit;
+}
+
+.auth-eye:hover { opacity: 1; }
+
+/* ── Lembrar de mim ──────────────────────────────────────────────────────── */
+.auth-remember {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 13px;
+  color: var(--muted);
+  transition: color 0.15s;
+}
+
+.auth-remember:hover { color: var(--text); }
+
+.auth-remember input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--gold);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* ── Mensagem de erro ────────────────────────────────────────────────────── */
+.auth-error {
+  font-size: 12px;
+  color: var(--red);
+  letter-spacing: 1px;
+  padding: 9px 12px;
+  background: rgba(248, 113, 113, 0.08);
+  border: 1px solid rgba(248, 113, 113, 0.25);
+  border-radius: 2px;
+}
+
+/* ── Botão de submit ─────────────────────────────────────────────────────── */
+.auth-submit {
+  width: 100%;
+  padding: 11px 0;
+  font-size: 14px;
+  letter-spacing: 3px;
+  margin-top: 4px;
+}
+
+.auth-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
