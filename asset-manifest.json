@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/Stellar-Map/static/css/main.6a93d50b.css",
+    "main.js": "/Stellar-Map/static/js/main.a361fc7c.js",
+    "static/js/453.be939be2.chunk.js": "/Stellar-Map/static/js/453.be939be2.chunk.js",
+    "static/media/logo.webp": "/Stellar-Map/static/media/logo.71529c5d71ec606a7b4a.webp",
+    "static/media/events.webp": "/Stellar-Map/static/media/events.2729973c6234c2981702.webp",
+    "static/media/fragment.webp": "/Stellar-Map/static/media/fragment.8e8d2a05f0c31915b96e.webp",
+    "static/media/moc.webp": "/Stellar-Map/static/media/moc.000c9a65e7142bc2bf29.webp",
+    "static/media/du.webp": "/Stellar-Map/static/media/du.dfed5f5fa1035d4fc017.webp",
+    "static/media/nmh.webp": "/Stellar-Map/static/media/nmh.31fe77f4bd313e14cb7f.webp",
+    "static/media/upd.webp": "/Stellar-Map/static/media/upd.dee2e05bf7c8ef7fda09.webp",
+    "static/media/gtik.webp": "/Stellar-Map/static/media/gtik.d252a413f4f48ea2ff42.webp",
+    "static/media/jade.webp": "/Stellar-Map/static/media/jade.c6487bb5adb237fee639.webp",
+    "static/media/bagicon.webp": "/Stellar-Map/static/media/bagicon.eefe15912bb4c0d5dd2f.webp",
+    "index.html": "/Stellar-Map/index.html",
+    "main.6a93d50b.css.map": "/Stellar-Map/static/css/main.6a93d50b.css.map",
+    "main.a361fc7c.js.map": "/Stellar-Map/static/js/main.a361fc7c.js.map",
+    "453.be939be2.chunk.js.map": "/Stellar-Map/static/js/453.be939be2.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.6a93d50b.css",
+    "static/js/main.a361fc7c.js"
+  ]
+}
