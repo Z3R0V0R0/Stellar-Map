@@ -116,7 +116,6 @@ export function calcTotalJades({
   const useCalendar = !!(startDate && endDate);
 
   const days         = useCalendar ? calcDaysBetween(startDate, endDate) : versionDays;
-  const endgameCycles = useCalendar
     ? calcEndgameCyclesFromDates(startDate, endDate)
     : calcEndgameCycles(versionDays);
   const weeks        = useCalendar
