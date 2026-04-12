@@ -1,70 +1,34 @@
-# Getting Started with Create React App
+# Stellar-Map-v1.1
+- Calculadora de Jades, Stellar Map. Feito para jogadores do Honkai: Star Rail criarem mapas de planejamento para organizar metas, e calcular seus tiros.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# 📖 Guia · Stellar Map",
+# 1. Como Usar
+- Stellar Map foi criado para auxiliar os jogadores do Star Rail a calcular seus tiros, usando informações de versão, recompensas, e modos de jogo presentes.
+“Criar Novo Mapa”: Permite você criar um mapa de tiros customizado.
+“Carregar Mapas”: Carrega os seus mapas salvos (É necessário ter uma conta para Salvar), você pode edita-los, exporta-los (JSON), Renomea-los, Mudar posições, e Deleta-los.
 
-## Available Scripts
+# 2. Menu de Criação 
+- Modo Calendário: Para fazer cálculos mais precisos, esse modo permite que você escolha o periodo que deseja calcular.
+- Duração da Versão: Sem uso do calendário, e o padrão de dias é 42.
+- Jades Diárias: Quantidade recebida por completar missões diárias. Padrão: 60.
+- Jades/Passes Atuais na Conta: Permite que você coloque a quantidade já existente na sua conta. Para os passes, eles serão automaticamente convertidos, e somados nas suas Jades.
+- Passe de Suprimento: Conta se você já possui o passe. (Se já usou, e recebeu recompensas, deixe desmarcado)
 
-In the project directory, you can run:
+# 3. Edição de Mapa
+- Passes & Fragmentos: Você pode marcar as opções que já possui, ou vai usar. Passe de Suprimentos, Conversão de Fragmentos Oníricos para Jades, Passe de Batalha (Glória dos Inominados), Medalha dos Inominados.
+- Endgames: MoC, Pura Ficção, e Sombra Apocalíptica. Tem opção de recompensas por estrelas.
+- Universo Divergente: Conta quantas vezes o Universo Divergente, e Guerra Monetária reseta nas segundas feiras, durante o periodo que você selecionou.
+- Reset Mensal & Teste de Personagens: Passes que são comprados na loja, e os testes de personagens da versão.
+- Atualização de Conteúdo: Jades de Manutenção e outros, Aumento de Nivel, Tiros Adicionais (Quando puxa um personagem E6 = 1 Passe), Jades Extras (Missão Principal, Modos Especiais, Exploração de Mundo, e Conquistas.)
+- Eventos & Aniversário: Presente da Odisseia (10 Tiros), Recompensas de Aniversário (Em Jades), Eventos (Você pode adicionar os eventos que o jogo tem atualmente, e quantas jades ofertam.)
 
-### `npm start`
+# 4. Meta de Tiros
+- Permite colocar a quantidade de Tiros que você almeija. Mostra a Porcentagem, a quantidade da meta em Jades, quantos tiros excedem, quantas Jades excedem.
+- Fim do Objetivo: Permite colocar um Prazo no seu Mapa usando o modo calendário. Esse prazo aparece tanto na tela de edição desse mapa, quanto em “Carregar Mapas”. Mostra quantos dias faltam.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+# 5. Login/Cadastro:
+- Recebe um Usuario e Senha. Permite que você salve seus mapas.
+---
+Feito por: Z3R0V0R0
+- Principal Linguagem: React
+- Tecnologias Artificiais Auxiliares: Claude.AI
