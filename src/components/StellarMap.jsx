@@ -3,7 +3,7 @@
 // Honkai: Star Rail — Pull Tracker
 // ──────────────────────────────────────────────────────────────────────────────
 
-import { useState, useMemo, useEffect, useRef, } from "react";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { HelpModal } from '../i18n/HelpModal.jsx';
 import '../i18n/HelpModal.css';
 import { AuthModal } from '../i18n/AuthModal.jsx';
@@ -25,6 +25,7 @@ import {
   calcWeeks,
   calcMondaysInRange,
   calcDaysBetween,
+  calcHoyolabCheckins,
   calcTotalJades,
   jadesToPulls,
   calcGoalProgress,
@@ -33,6 +34,9 @@ import {
   todayStr,
   addDays,
 } from "../logic/calculations";
+
+// Dados de eventos pré-definidos da versão e anedotas de eventos passados
+import { VERSION_EVENTS, PAST_EVENTS } from "../data/versionEvents";
 
 // Componentes de UI
 import {
@@ -45,6 +49,79 @@ import {
   HelpButton,
   StellarLogo,
 } from "../StellarMapUI";
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Componentes auxiliares definidos FORA do componente principal.
+// ──────────────────────────────────────────────────────────────────────────────
+
+const Toast = ({ toast }) => toast ? (
+  <div key={toast.key} className={`toast ${toast.type}`}>{toast.msg}</div>
+) : null;
+
+const ConfirmModal = ({ confirmModal, onCancel, onConfirm, t }) => {
+  if (!confirmModal) return null;
+  return (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 500,
+      background: "rgba(4, 6, 20, 0.82)",
+      backdropFilter: "blur(4px)",
+      display: "flex", alignItems: "center", justifyContent: "center",
+    }}>
+      <div style={{
+        background: "rgba(10, 17, 48, 0.98)",
+        border: "1px solid rgba(248,113,113,0.35)",
+        borderTop: "2px solid var(--red)",
+        padding: "28px 32px",
+        maxWidth: 380, width: "90%",
+        boxShadow: "0 0 40px rgba(248,113,113,0.12)",
+      }}>
+        <div style={{
+          fontFamily: "'Orbitron', sans-serif", fontSize: 12,
+          color: "var(--red)", letterSpacing: 3, textTransform: "uppercase",
+          marginBottom: 14,
+        }}>{t("confirm_action")}</div>
+        <div style={{ fontSize: 15, color: "var(--text)", lineHeight: 1.6, marginBottom: 24 }}>
+          {confirmModal.message}
+        </div>
+        <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+          <button className="sbtn ghost" onClick={onCancel}>{t("cancel")}</button>
+          <button className="sbtn re" onClick={onConfirm}>{t("delete")}</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const TopRightBar = ({ user, lang, langOpen, setLangOpen, langRef, LANGS, t, onLoginClick, onLogout, onLangChange }) => (
+  <div style={{ position: "fixed", top: 12, right: 12, display: "flex", alignItems: "center", gap: 8, zIndex: 100 }}>
+    {user ? (
+      <>
+        <span style={{ fontSize: 12, color: "var(--gold, #f0c346)", fontFamily: "var(--font, monospace)", letterSpacing: 1, whiteSpace: "nowrap" }}>
+          {t("logged_as")} {user.user_metadata?.display_name ?? user.email}
+        </span>
+        <button className="sbtn ghost" style={{ fontSize: 11, padding: "3px 10px" }} onClick={onLogout}>{t("logout")}</button>
+      </>
+    ) : (
+      <button className="sbtn cy" style={{ fontSize: 11, padding: "3px 10px" }} onClick={onLoginClick}>
+        {t("login_register")}
+      </button>
+    )}
+    <div ref={langRef} style={{ position: "relative" }}>
+      <button className="sbtn ghost" style={{ fontSize: 16, padding: "3px 8px", lineHeight: 1 }} onClick={() => setLangOpen(o => !o)} title={lang}>🌐</button>
+      {langOpen && (
+        <div style={{ position: "absolute", top: "calc(100% + 6px)", right: 0, background: "var(--bg2, #0e1526)", border: "1px solid var(--border, rgba(255,255,255,0.12))", borderRadius: 8, overflow: "hidden", minWidth: 90, boxShadow: "0 8px 24px rgba(0,0,0,0.5)", zIndex: 200 }}>
+          {LANGS.map(l => (
+            <button key={l} onClick={() => onLangChange(l)}
+              style={{ display: "block", width: "100%", textAlign: "left", padding: "8px 16px", background: l === lang ? "rgba(240,195,70,0.12)" : "transparent", color: l === lang ? "var(--gold, #f0c346)" : "var(--text, #c8d0e0)", fontFamily: "var(--font, monospace)", fontSize: 12, letterSpacing: 1, border: "none", cursor: "pointer", transition: "background 0.15s" }}
+              onMouseEnter={e => { if (l !== lang) e.currentTarget.style.background = "rgba(255,255,255,0.06)"; }}
+              onMouseLeave={e => { if (l !== lang) e.currentTarget.style.background = "transparent"; }}
+            >{l}</button>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+);
 
 // ──────────────────────────────────────────────────────────────────────────────
 
@@ -63,72 +140,23 @@ export default function StellarMap() {
   // ── Toast ──
   const [toast, setToast] = useState(null);
   const toastTimer = useRef(null);
-  const showToast = (msg, type = "success") => {
+  const showToast = useCallback((msg, type = "success") => {
     if (toastTimer.current) clearTimeout(toastTimer.current);
     setToast(null);
     setTimeout(() => {
       setToast({ msg, type, key: Date.now() });
       toastTimer.current = setTimeout(() => setToast(null), 3000);
     }, 20);
-  };
+  }, []);
 
   // ── Modais ──
   const [helpOpen, setHelpOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
   const [confirmModal, setConfirmModal] = useState(null);
 
-  const showConfirm = (message, onConfirm) => {
-    setConfirmModal({ message, onConfirm });
-  };
-
-  const ConfirmModal = () => {
-    if (!confirmModal) return null;
-    return (
-      <div style={{
-        position: "fixed", inset: 0, zIndex: 500,
-        background: "rgba(4, 6, 20, 0.82)",
-        backdropFilter: "blur(4px)",
-        display: "flex", alignItems: "center", justifyContent: "center",
-      }}>
-        <div style={{
-          background: "rgba(10, 17, 48, 0.98)",
-          border: "1px solid rgba(248,113,113,0.35)",
-          borderTop: "2px solid var(--red)",
-          padding: "28px 32px",
-          maxWidth: 380, width: "90%",
-          boxShadow: "0 0 40px rgba(248,113,113,0.12)",
-        }}>
-          <div style={{
-            fontFamily: "'Orbitron', sans-serif", fontSize: 12,
-            color: "var(--red)", letterSpacing: 3, textTransform: "uppercase",
-            marginBottom: 14,
-          }}>{t("confirm_action")}</div>
-          <div style={{ fontSize: 15, color: "var(--text)", lineHeight: 1.6, marginBottom: 24 }}>
-            {confirmModal.message}
-          </div>
-          <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-            <button className="sbtn ghost" onClick={() => setConfirmModal(null)}>{t("cancel")}</button>
-            <button className="sbtn re" onClick={() => {
-              confirmModal.onConfirm();
-              setConfirmModal(null);
-            }}>{t("delete")}</button>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user);
-      if (data.user) fetchMaps();
-    });
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      if (session?.user) fetchMaps();
-    });
-    return () => listener.subscription.unsubscribe();
-  });
+  const showConfirm = useCallback((message, onConfirmCb) => {
+    setConfirmModal({ message, onConfirm: onConfirmCb });
+  }, []);
 
   // ── Mapas ──
   const [maps, setMaps] = useState([]);
@@ -136,16 +164,29 @@ export default function StellarMap() {
   const [dragIdx, setDragIdx] = useState(null);
   const [dragOverIdx, setDragOverIdx] = useState(null);
 
-  const fetchMaps = async () => {
-    if (!user) return;
+  const fetchMaps = useCallback(async (userId) => {
+    if (!userId) return;
     const { data, error } = await supabase
-      .from("maps").select("*").eq("user_id", user.id).order("created_at", { ascending: false });
+      .from("maps").select("*").eq("user_id", userId).order("created_at", { ascending: false });
     if (error) console.error(error);
     else {
       setMaps(data);
       setDisplayMaps([]);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user);
+      if (data.user) fetchMaps(data.user.id);
+    });
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      const u = session?.user ?? null;
+      setUser(u);
+      if (u) fetchMaps(u.id);
+    });
+    return () => listener.subscription.unsubscribe();
+  }, [fetchMaps]);
 
   const [currentMapId, setCurrentMapId] = useState(null);
 
@@ -180,12 +221,18 @@ export default function StellarMap() {
       manualFragments, convertFragments,
       battlePass, bpMedal,
       mocStars, pfStars, apocStars,
-      du, customEvents,
+      du, duNewCycle, duLevelCount, cwNewCycle,
+      customEvents,
       anniversary, anniversaryJades,
       extraJades, trialCount, monthlyResets,
       bonusPulls, newCycleJades, levelUpJades,
+      liveCode, maintenanceJades,
+      hoyolabCheckin,
       initialJades, initialPasses, goalPulls,
       goalDeadline,
+      versionEventToggles,
+      pastEventToggles,
+      customPastEvents,
     };
     if (currentMapId) {
       await supabase.from("maps").update({ name: mapName, data: payload }).eq("id", currentMapId);
@@ -193,12 +240,12 @@ export default function StellarMap() {
       const finalName = generateUniqueName(mapName, maps);
       await saveMap(payload, finalName);
     }
-    await fetchMaps();
+    await fetchMaps(user.id);
     showToast(t("map_saved"), "success");
   };
 
-  const generateUniqueName = (name, maps) => {
-    const names = maps.map(m => m.name);
+  const generateUniqueName = (name, mapList) => {
+    const names = mapList.map(m => m.name);
     if (!names.includes(name)) return name;
     let i = 1;
     let newName = `${name} (${i})`;
@@ -218,16 +265,30 @@ export default function StellarMap() {
     setManualFragments(0); setConvertFragments(0);
     setBattlePass(false); setBpMedal(false);
     setMocStars(0); setPfStars(0); setApocStars(0);
-    setDu(false); setCustomEvents([]);
+    setDu(false);
+    setDuNewCycle(false);
+    setDuLevelCount(0);
+    setCwNewCycle(false);
+    setCustomEvents([]);
     setAnniversary(false); setAnniversaryJades(800);
     setExtraJades(0); setTrialCount(0); setMonthlyResets(0);
     setBonusPulls(0); setNewCycleJades(0); setLevelUpJades(0);
+    setLiveCode(false);
+    setMaintenanceJades(false);
+    setHoyolabCheckin(false);
     setInitialJades(0); setInitialPasses(0);
     setGoalPulls(0);
     setGoalDeadline("");
+    setVersionEventToggles(
+      Object.fromEntries(VERSION_EVENTS.map(e => [e.id, e.enabled ?? false]))
+    );
+    setPastEventToggles(
+      Object.fromEntries(PAST_EVENTS.map(e => [e.id, e.enabled ?? false]))
+    );
+    setCustomPastEvents([]);
+    setAnecdoteOpen(false);
   };
 
-  // ── Carrega mapa com toast ──
   const loadMap = (map) => {
     const d = map.data;
     setCurrentMapId(map.id);
@@ -242,13 +303,29 @@ export default function StellarMap() {
     setManualFragments(safe(d.manualFragments)); setConvertFragments(safe(d.convertFragments));
     setBattlePass(!!d.battlePass); setBpMedal(!!d.bpMedal);
     setMocStars(safe(d.mocStars)); setPfStars(safe(d.pfStars)); setApocStars(safe(d.apocStars));
-    setDu(!!d.du); setCustomEvents(d.customEvents || []);
+    setDu(!!d.du);
+    setDuNewCycle(!!d.duNewCycle);
+    setDuLevelCount(safe(d.duLevelCount));
+    setCwNewCycle(!!d.cwNewCycle);
+    setCustomEvents(d.customEvents || []);
     setAnniversary(!!d.anniversary); setAnniversaryJades(safe(d.anniversaryJades, 800));
     setExtraJades(safe(d.extraJades)); setTrialCount(safe(d.trialCount)); setMonthlyResets(safe(d.monthlyResets));
     setBonusPulls(safe(d.bonusPulls)); setNewCycleJades(safe(d.newCycleJades)); setLevelUpJades(safe(d.levelUpJades));
+    setLiveCode(!!d.liveCode);
+    setMaintenanceJades(!!d.maintenanceJades);
+    setHoyolabCheckin(!!d.hoyolabCheckin);
     setInitialJades(safe(d.initialJades)); setInitialPasses(safe(d.initialPasses));
     setGoalPulls(safe(d.goalPulls));
     setGoalDeadline(d.goalDeadline || "");
+    setVersionEventToggles(
+      d.versionEventToggles
+      ?? Object.fromEntries(VERSION_EVENTS.map(e => [e.id, e.enabled ?? false]))
+    );
+    setPastEventToggles(
+      d.pastEventToggles
+      ?? Object.fromEntries(PAST_EVENTS.map(e => [e.id, e.enabled ?? false]))
+    );
+    setCustomPastEvents(d.customPastEvents || []);
     showToast(t("map_loaded"), "success");
     setScreen("dash");
   };
@@ -258,7 +335,7 @@ export default function StellarMap() {
     if (!newName) return;
     newName = generateUniqueName(newName, maps);
     await supabase.from("maps").update({ name: newName }).eq("id", map.id);
-    fetchMaps();
+    fetchMaps(user.id);
   };
 
   const exportMap = (map) => {
@@ -268,17 +345,17 @@ export default function StellarMap() {
     a.href = url; a.download = `${map.name}.json`; a.click();
   };
 
-  // ── Delete com modal customizado ──
-  const deleteMap = (id, name) => {
+  const deleteMap = useCallback((id, name) => {
     showConfirm(
       t("confirm_delete", { name }),
       async () => {
         await supabase.from("maps").delete().eq("id", id);
-        fetchMaps();
+        setConfirmModal(null);
+        fetchMaps(user?.id);
         showToast(t("map_deleted"), "warning");
       }
     );
-  };
+  }, [showConfirm, showToast, fetchMaps, user, t]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -291,8 +368,8 @@ export default function StellarMap() {
   const [versionDays, setVersionDays] = useState(42);
   const [dailyJades, setDailyJades] = useState(60);
 
-  // ── 📅 Calendário ──
-  const [useCalendar, setUseCalendar] = useState(false);
+  // ──   Calendário ──
+  const [useCalendar, setUseCalendar] = useState(true);
   const [startDate, setStartDate] = useState(todayStr());
   const [endDate, setEndDate] = useState(addDays(todayStr(), 42));
 
@@ -356,13 +433,34 @@ export default function StellarMap() {
   const [mocStars, setMocStars] = useState(0);
   const [pfStars, setPfStars] = useState(0);
   const [apocStars, setApocStars] = useState(0);
+
+  // ── Universo Divergente ──
   const [du, setDu] = useState(false);
+  const [duNewCycle, setDuNewCycle] = useState(false);
+  const [duLevelCount, setDuLevelCount] = useState(0);
+  const [cwNewCycle, setCwNewCycle] = useState(false);
 
   // ── Eventos customizados ──
   const [customEvents, setCustomEvents] = useState([]);
   const [showNewEvent, setShowNewEvent] = useState(false);
   const [newEvName, setNewEvName] = useState("");
   const [newEvJades, setNewEvJades] = useState(500);
+
+  // ── Eventos pré-definidos da versão ──
+  const [versionEventToggles, setVersionEventToggles] = useState(
+    () => Object.fromEntries(VERSION_EVENTS.map(e => [e.id, e.enabled ?? false]))
+  );
+  const toggleVersionEvent = (id) =>
+    setVersionEventToggles(prev => ({ ...prev, [id]: !prev[id] }));
+
+  // ── Anedotas de eventos passados ──
+  const [anecdoteOpen, setAnecdoteOpen] = useState(false);
+  const [pastEventToggles, setPastEventToggles] = useState(
+    () => Object.fromEntries(PAST_EVENTS.map(e => [e.id, e.enabled ?? false]))
+  );
+  const togglePastEvent = (id) =>
+    setPastEventToggles(prev => ({ ...prev, [id]: !prev[id] }));
+  const [customPastEvents, setCustomPastEvents] = useState([]);
 
   // ── Extras ──
   const [anniversary, setAnniversary] = useState(false);
@@ -374,6 +472,13 @@ export default function StellarMap() {
   const [newCycleJades, setNewCycleJades] = useState(0);
   const [levelUpJades, setLevelUpJades] = useState(0);
 
+  // ── Atualização de Conteúdo — novos toggles ──
+  const [liveCode, setLiveCode] = useState(false);
+  const [maintenanceJades, setMaintenanceJades] = useState(false);
+
+  // ── Hoyolab Check-in ──
+  const [hoyolabCheckin, setHoyolabCheckin] = useState(false);
+
   // ── Meta ──
   const [goalPulls, setGoalPulls] = useState(0);
   const [goalDeadline, setGoalDeadline] = useState("");
@@ -382,6 +487,22 @@ export default function StellarMap() {
   const passFragments = expressPass ? expressQty * 300 : 0;
   const totalFragments = passFragments + manualFragments;
   const safeConvert = Math.min(convertFragments, totalFragments);
+
+  // ── Jades de eventos pré-definidos da versão ──
+  const versionEventJades = VERSION_EVENTS
+    .filter(e => versionEventToggles[e.id])
+    .reduce((acc, e) => acc + e.jades, 0);
+
+  // ── Jades de anedotas (eventos passados) ──
+  const pastEventJades =
+    PAST_EVENTS.filter(e => pastEventToggles[e.id]).reduce((acc, e) => acc + e.jades, 0)
+    + customPastEvents.reduce((acc, e) => acc + e.jades, 0);
+
+  // ── Contagem de check-ins Hoyolab no período ──
+  const hoyolabCheckinCount = useMemo(() => {
+    if (!hoyolabCheckin || !useCalendar) return 0;
+    return calcHoyolabCheckins(startDate, endDate);
+  }, [hoyolabCheckin, useCalendar, startDate, endDate]);
 
   // ── Cálculo total de jades ──
   const totalJades = useMemo(() =>
@@ -394,10 +515,15 @@ export default function StellarMap() {
       battlePass, bpMedal,
       convertFragments: safeConvert,
       initialJades, initialPasses,
-      du, customEvents,
+      du, duNewCycle, duLevelCount, cwNewCycle,
+      customEvents,
       anniversary, anniversaryJades,
       extraJades, trialCount, monthlyResets,
       bonusPulls, newCycleJades, levelUpJades,
+      liveCode, maintenanceJades,
+      versionEventJades,
+      pastEventJades,
+      hoyolabCheckinJades: hoyolabCheckinCount * 20,
       startDate: useCalendar ? startDate : undefined,
       endDate: useCalendar ? endDate : undefined,
     }),
@@ -405,15 +531,23 @@ export default function StellarMap() {
       activeDays, dailyJades, expressPass, expressQty, odyssey,
       mocStars, pfStars, apocStars, battlePass, bpMedal,
       safeConvert, initialJades, initialPasses,
-      du, customEvents, anniversary, anniversaryJades,
+      du, duNewCycle, duLevelCount, cwNewCycle,
+      customEvents, anniversary, anniversaryJades,
       extraJades, trialCount, monthlyResets, bonusPulls,
-      newCycleJades, levelUpJades, useCalendar, startDate, endDate,
+      newCycleJades, levelUpJades,
+      liveCode, maintenanceJades, versionEventJades, pastEventJades,
+      hoyolabCheckinCount,
+      useCalendar, startDate, endDate,
     ]
   );
 
   const totalPulls = jadesToPulls(totalJades);
   const { hasGoal, goalMet, pullsNeeded, jadesNeeded, progressPct, surplus } =
     calcGoalProgress(totalPulls, goalPulls);
+
+  // ── Helpers de data para topbar ──
+  const fmtShort = (d) =>
+    new Date(d + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
 
   // ── Handlers de eventos ──
   const addEvent = () => {
@@ -424,7 +558,7 @@ export default function StellarMap() {
   const removeEvent = id => setCustomEvents(p => p.filter(e => e.id !== id));
   const goToDash = () => setScreen("dash");
 
-  // ── Barra superior direita ──
+  // ── Barra de idiomas ──
   const [langOpen, setLangOpen] = useState(false);
   const langRef = useRef(null);
 
@@ -438,59 +572,69 @@ export default function StellarMap() {
 
   const LANGS = ["Português", "English", "简体中文", "日本語", "ภาษาไทย", "Español"];
 
-  // ── Componentes auxiliares ──
-  const Toast = () => toast ? (
-    <div key={toast.key} className={`toast ${toast.type}`}>{toast.msg}</div>
-  ) : null;
+  const handleLangChange = useCallback((l) => {
+    setLang(l);
+    localStorage.setItem("stellar_lang", l);
+    setLangOpen(false);
+  }, []);
 
-  // ── AuthModal compartilhado (renderizado em todas as telas) ──
-  const SharedAuthModal = () => authOpen ? (
+  // ── StarController ──
+  const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
+  const StarController = ({ label, value, setValue, max }) => {
+    const add = (n) => setValue(v => clamp(v + n, 0, max));
+    const sub = (n) => setValue(v => clamp(v - n, 0, max));
+    const isMax = value >= max;
+    const isMin = value <= 0;
+    return (
+      <Field label={t("star_label", { label, max })}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <div style={{ fontSize: 18, fontWeight: 600 }}>✦ {value} / {max}</div>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <button disabled={isMin} onClick={() => sub(3)} className="sbtn ghost">-3</button>
+            <button disabled={isMin} onClick={() => sub(1)} className="sbtn ghost">-1</button>
+            <button disabled={isMax} onClick={() => add(1)} className="sbtn cy">+1</button>
+            <button disabled={isMax} onClick={() => add(3)} className="sbtn cy">+3</button>
+            <button disabled={isMax} onClick={() => setValue(max)} className="sbtn gold">{t("star_complete")}</button>
+          </div>
+        </div>
+      </Field>
+    );
+  };
+
+  // ── Props compartilhadas para TopRightBar ──
+  const topRightProps = {
+    user, lang, langOpen, setLangOpen, langRef, LANGS, t,
+    onLoginClick: () => setAuthOpen(true),
+    onLogout: handleLogout,
+    onLangChange: handleLangChange,
+  };
+
+  // ── AuthModal compartilhado ──
+  const sharedAuthModal = authOpen ? (
     <AuthModal
-      t={t}
-      supabase={supabase}
+      t={t} supabase={supabase}
       onClose={() => setAuthOpen(false)}
       onSuccess={(msg, type) => showToast(msg, type)}
     />
   ) : null;
 
-  const TopRightBar = () => (
-    <div style={{ position: "fixed", top: 12, right: 12, display: "flex", alignItems: "center", gap: 8, zIndex: 100 }}>
-      {user ? (
-        <>
-          <span style={{ fontSize: 12, color: "var(--gold, #f0c346)", fontFamily: "var(--font, monospace)", letterSpacing: 1, whiteSpace: "nowrap" }}>
-            {t("logged_as")} {user.user_metadata?.display_name ?? user.email}
-          </span>
-          <button className="sbtn ghost" style={{ fontSize: 11, padding: "3px 10px" }} onClick={handleLogout}>{t("logout")}</button>
-        </>
-      ) : (
-        <button className="sbtn cy" style={{ fontSize: 11, padding: "3px 10px" }} onClick={() => setAuthOpen(true)}>
-          {t("login_register")}
-        </button>
-      )}
-      <div ref={langRef} style={{ position: "relative" }}>
-        <button className="sbtn ghost" style={{ fontSize: 16, padding: "3px 8px", lineHeight: 1 }} onClick={() => setLangOpen(o => !o)} title={lang}>🌐</button>
-        {langOpen && (
-          <div style={{ position: "absolute", top: "calc(100% + 6px)", right: 0, background: "var(--bg2, #0e1526)", border: "1px solid var(--border, rgba(255,255,255,0.12))", borderRadius: 8, overflow: "hidden", minWidth: 90, boxShadow: "0 8px 24px rgba(0,0,0,0.5)", zIndex: 200 }}>
-            {LANGS.map(l => (
-              <button key={l} onClick={() => { setLang(l); localStorage.setItem("stellar_lang", l); setLangOpen(false); }}
-                style={{ display: "block", width: "100%", textAlign: "left", padding: "8px 16px", background: l === lang ? "rgba(240,195,70,0.12)" : "transparent", color: l === lang ? "var(--gold, #f0c346)" : "var(--text, #c8d0e0)", fontFamily: "var(--font, monospace)", fontSize: 12, letterSpacing: 1, border: "none", cursor: "pointer", transition: "background 0.15s" }}
-                onMouseEnter={e => { if (l !== lang) e.currentTarget.style.background = "rgba(255,255,255,0.06)"; }}
-                onMouseLeave={e => { if (l !== lang) e.currentTarget.style.background = "transparent"; }}
-              >{l}</button>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
+  // ── ConfirmModal compartilhado ──
+  const sharedConfirmModal = (
+    <ConfirmModal
+      confirmModal={confirmModal}
+      onCancel={() => setConfirmModal(null)}
+      onConfirm={() => confirmModal?.onConfirm?.()}
+      t={t}
+    />
   );
 
   // ────────────────────────────────────────────────── TELA: HOME ──────────────
   if (screen === "home") return (
     <div className="app">
       <StarBackground />
-      <TopRightBar />
-      <Toast />
-      <SharedAuthModal />
+      <TopRightBar {...topRightProps} />
+      <Toast toast={toast} />
+      {sharedAuthModal}
       <div className="rel home">
         <HelpButton t={t} onClick={() => setHelpOpen(true)} />
         <StellarLogo t={t} />
@@ -498,7 +642,7 @@ export default function StellarMap() {
           <button className="btn-primary" onClick={() => { setCurrentMapId(null); setMapName("Minha Jornada Estelar"); setScreen("create"); }}>
             {t("create_map")}
           </button>
-          <button className="btn-secondary" onClick={() => { fetchMaps(); setScreen("maps"); }}>
+          <button className="btn-secondary" onClick={() => { fetchMaps(user?.id); setScreen("maps"); }}>
             {t("load_map")}
           </button>
         </div>
@@ -542,10 +686,10 @@ export default function StellarMap() {
     return (
       <div className="app">
         <StarBackground />
-        <TopRightBar />
-        <Toast />
-        <ConfirmModal />
-        <SharedAuthModal />
+        <TopRightBar {...topRightProps} />
+        <Toast toast={toast} />
+        {sharedConfirmModal}
+        {sharedAuthModal}
         <div className="rel create-wrap">
           <div className="create-box">
             <div className="create-title">{t("my_maps")}</div>
@@ -607,9 +751,9 @@ export default function StellarMap() {
   if (screen === "create") return (
     <div className="app">
       <StarBackground />
-      <TopRightBar />
-      <Toast />
-      <SharedAuthModal />
+      <TopRightBar {...topRightProps} />
+      <Toast toast={toast} />
+      {sharedAuthModal}
       <div className="rel create-wrap">
         <div className="create-box">
           <div className="create-title">{t("new_map_title")}</div>
@@ -628,6 +772,7 @@ export default function StellarMap() {
             sub={t("use_calendar_sub")}
             val={useCalendar}
             onChange={handleToggleCalendar}
+            icon={require("../imgs/calendar.webp")}
           />
           <div style={{ marginTop: 20 }} />
           {useCalendar ? (
@@ -713,36 +858,14 @@ export default function StellarMap() {
     </div>
   );
 
-  // ────────────────────────────────────────────────── PAINEL DE ESTRELAS ──────────
-  const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
-  const StarController = ({ label, value, setValue, max }) => {
-    const add = (n) => setValue(v => clamp(v + n, 0, max));
-    const sub = (n) => setValue(v => clamp(v - n, 0, max));
-    const isMax = value >= max;
-    const isMin = value <= 0;
-    return (
-      <Field label={t("star_label", { label, max })}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          <div style={{ fontSize: 18, fontWeight: 600 }}>✦ {value} / {max}</div>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            <button disabled={isMin} onClick={() => sub(3)} className="sbtn ghost">-3</button>
-            <button disabled={isMin} onClick={() => sub(1)} className="sbtn ghost">-1</button>
-            <button disabled={isMax} onClick={() => add(1)} className="sbtn cy">+1</button>
-            <button disabled={isMax} onClick={() => add(3)} className="sbtn cy">+3</button>
-            <button disabled={isMax} onClick={() => setValue(max)} className="sbtn gold">{t("star_complete")}</button>
-          </div>
-        </div>
-      </Field>
-    );
-  };
-
   // ────────────────────────────────────────────────── TELA: DASHBOARD ──────────
   return (
     <div className="app">
       <StarBackground />
-      <TopRightBar />
-      <Toast />
-      <SharedAuthModal />
+      <TopRightBar {...topRightProps} />
+      <Toast toast={toast} />
+      {sharedConfirmModal}
+      {sharedAuthModal}
       <div className="rel dash">
 
         {/* Barra superior */}
@@ -775,6 +898,17 @@ export default function StellarMap() {
                 <img src={require("../imgs/fragment.webp")} alt="fragmentos" style={{ width: 28, marginLeft: 6, verticalAlign: "middle", filter: "drop-shadow(0 0 6px rgba(120,200,255,0.7))" }} />
               </span>
             </div>
+            <div className="sdiv" />
+            {/* Chip: duração / período */}
+            <div className="stat-chip">
+              <span className="slabel">{t("stat_duration")}</span>
+              <span className="sval">
+                {useCalendar
+                  ? `${fmtShort(startDate)} – ${fmtShort(endDate)}`
+                  : `${activeDays} ${t("days")}`
+                }
+              </span>
+            </div>
             {hasGoal && (
               <>
                 <div className="sdiv" />
@@ -800,12 +934,12 @@ export default function StellarMap() {
             </div>
 
             <SectionLabel>{t("express_section")}</SectionLabel>
-            <ToggleRow label={t("activate_pass")} img="../imgs/supplymail.webp" sub={t("express_sub_card")} val={expressPass} onChange={setExpressPass} />
+            <ToggleRow label={t("activate_pass")} sub={t("express_sub_card")} val={expressPass} onChange={setExpressPass} />
             <Field label={t("express_qty")}>
               <NumInput val={expressQty} onChange={setExpressQty} min={1} step={1} />
             </Field>
             <InfoBox>
-              <span className="cy">{expressPass ? subtotalExpress(expressQty).toLocaleString() : 0} jades</span>
+              <span className="cy">{expressPass ? subtotalExpress(expressQty).toLocaleString() : 0} ✦</span>
             </InfoBox>
 
             <div style={{ marginTop: 18 }}>
@@ -855,7 +989,7 @@ export default function StellarMap() {
             <StarController label={t("apoc")} value={apocStars} setValue={setApocStars} max={12} />
             <InfoBox style={{ marginTop: 12 }}>
               <span className="mu">{t("endgame_total")} </span>
-              <span className="cy">{Math.floor(subtotalEndgamesStars({ mocStars, pfStars, apocStars }))} jades</span>
+              <span className="cy">{Math.floor(subtotalEndgamesStars({ mocStars, pfStars, apocStars }))} ✦</span>
             </InfoBox>
           </div>
 
@@ -882,12 +1016,52 @@ export default function StellarMap() {
                 <span className="mu">{t("du_mondays_info")}</span>
               </InfoBox>
             )}
+
+            {/* Novo Ciclo do DU */}
+            <div style={{ marginTop: 14 }}>
+              <ToggleRow
+                label={t("du_new_cycle_toggle")}
+                sub={t("du_new_cycle_sub")}
+                val={duNewCycle}
+                onChange={setDuNewCycle}
+              />
+            </div>
+
+            {/* Aumento de Nível */}
+            <div style={{ marginTop: 14 }}>
+              <Field label={t("du_level_field")}>
+                <NumInput val={duLevelCount} onChange={setDuLevelCount} min={0} step={1} />
+              </Field>
+              {duLevelCount > 0 && (
+                <InfoBox>
+                  <span className="cy">{duLevelCount * 120} ✦</span>
+                  <span className="mu"> ({duLevelCount} {t("du_level_count_label")})</span>
+                </InfoBox>
+              )}
+            </div>
+
+            {/* Guerras Monetárias — Novo Ciclo */}
+            <div style={{ marginTop: 14 }}>
+              <ToggleRow
+                label={t("cw_new_cycle_toggle")}
+                sub={t("cw_new_cycle_sub")}
+                val={cwNewCycle}
+                onChange={setCwNewCycle}
+              />
+              {cwNewCycle && (
+                <InfoBox>
+                  <span className="cy">540 ✦</span>
+                </InfoBox>
+              )}
+            </div>
+
+
           </div>
 
           {/* Card: Reset Mensal + Trials */}
           <div className="card">
             <div className="card-hd">
-              <img src={require("../imgs/bagicon.webp")} alt="du_sign" style={{ width: 30, marginRight: 5, verticalAlign: "middle", filter: "drop-shadow(0 0 6px rgba(120,200,255,0.7))" }} />
+              <img src={require("../imgs/bagicon.webp")} alt="bagicon" style={{ width: 30, marginRight: 5, verticalAlign: "middle", filter: "drop-shadow(0 0 6px rgba(120,200,255,0.7))" }} />
               <span className="card-ttl">{t("card_monthly_title")}</span>
             </div>
             <Field label={t("monthly_resets_field")}>
@@ -895,15 +1069,80 @@ export default function StellarMap() {
             </Field>
             <InfoBox>
               <span className="cy">{monthlyResets * 5} {t("stat_total_passes").toLowerCase()}</span>
-              <span className="mu"> · {(monthlyResets * 5 * PULL_COST).toLocaleString()} jades</span>
+              <span className="mu"> · {(monthlyResets * 5 * PULL_COST).toLocaleString()} ✦</span>
             </InfoBox>
             <div style={{ marginTop: 14 }}>
               <Field label={t("trials_field")}>
                 <NumInput val={trialCount} onChange={setTrialCount} min={0} step={1} />
               </Field>
               <InfoBox>
-                <span className="cy">{trialCount * 20} jades</span>
+                <span className="cy">{trialCount * 20} ✦</span>
               </InfoBox>
+            </div>
+
+            {/* Hoyolab Check-in */}
+            <div style={{ marginTop: 14 }}>
+              <ToggleRow
+                label={t("hoyolab_checkin_toggle")}
+                sub={useCalendar
+                  ? t("hoyolab_checkin_sub_calendar", { n: hoyolabCheckinCount, jades: hoyolabCheckinCount * 20 },)
+                  : t("hoyolab_checkin_sub")}
+                val={hoyolabCheckin}
+                onChange={setHoyolabCheckin}
+                icon={require("../imgs/calendar.webp")} 
+              />
+              {hoyolabCheckin && !useCalendar && (
+                <InfoBox>
+                  <span style={{ color: "var(--gold)", fontSize: 12 }}>
+                    ⚠ {t("hoyolab_checkin_needs_calendar")}
+                  </span>
+                </InfoBox>
+              )}
+              {hoyolabCheckin && useCalendar && hoyolabCheckinCount > 0 && (
+                <InfoBox>
+                  <span className="mu">{t("hoyolab_checkin_days")} </span>
+                  <span className="cy">{hoyolabCheckinCount}× </span>
+                  <span className="mu">= </span>
+                  <span className="cy">{hoyolabCheckinCount * 20} ✦</span>
+                </InfoBox>
+              )}
+            </div>
+
+            {/* ── Gaveta: Anedotas de Eventos Passados ── */}
+            <div style={{ marginTop: 18, borderTop: "1px solid var(--border)", paddingTop: 14 }}>
+              <button
+                onClick={() => setAnecdoteOpen(o => !o)}
+                style={{
+                  width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
+                  background: "transparent", border: "none", cursor: "pointer",
+                  padding: "4px 0", color: "var(--text)",
+                }}
+              >
+                <div>
+                  <span className="card-ttl">📜 {t("past_events")}</span>
+                </div>
+                <span style={{ fontSize: 20, color: "var(--gold)", transition: "transform 0.2s", display: "inline-block", transform: anecdoteOpen ? "rotate(180deg)" : "rotate(0deg)" }}>▼</span>
+              </button>
+
+              {anecdoteOpen && (
+                <div style={{ marginTop: 12 }}>
+                  <p style={{ fontSize: 14, color: "var(--muted)", marginBottom: 12 }}>{t("pe_sub")}</p>
+                  {/* Eventos passados pré-definidos */}
+                  {PAST_EVENTS.length > 0 && (
+                    <div style={{ marginBottom: 12 }}>
+                      {PAST_EVENTS.map(ev => (
+                        <ToggleRow
+                          key={ev.id}
+                          label={ev.nameKey ? t(ev.nameKey) : ev.name}
+                          sub={`+${ev.jades.toLocaleString()} ✦`}
+                          val={pastEventToggles[ev.id] ?? false}
+                          onChange={() => togglePastEvent(ev.id)}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
@@ -919,6 +1158,21 @@ export default function StellarMap() {
             <Field label={t("level_up_field")}>
               <NumInput val={levelUpJades} onChange={setLevelUpJades} min={0} step={100} />
             </Field>
+
+            {/* Códigos da Live + Manutenção */}
+            <ToggleRow
+              label={t("live_code_toggle")}
+              sub={t("live_code_sub")}
+              val={liveCode}
+              onChange={setLiveCode}
+            />
+            <ToggleRow
+              label={t("maintenance_toggle")}
+              sub={t("maintenance_sub")}
+              val={maintenanceJades}
+              onChange={setMaintenanceJades}
+            />
+
             <div className="card-hd" style={{ marginTop: 8 }}>
               <span className="card-ico">➕</span>
               <span className="card-ttl">{t("card_extras_title")}</span>
@@ -938,7 +1192,6 @@ export default function StellarMap() {
               <span className="card-ttl">{t("card_events_title")}</span>
             </div>
 
-            {/* Odisseia */}
             <div className="card-hd" style={{ marginTop: 0, marginBottom: 4 }}>
               <img src={require("../imgs/gtik.webp")} alt="ticket" style={{ width: 30, verticalAlign: "middle", filter: "drop-shadow(0 0 4px rgba(240,195,70,0.7))" }} />
               <span className="card-ttl">{t("card_odyssey_title")}</span>
@@ -955,6 +1208,23 @@ export default function StellarMap() {
                 </Field>
               </div>
             )}
+
+            {/* Eventos pré-definidos da versão */}
+            {VERSION_EVENTS.length > 0 && (
+              <div style={{ marginTop: 16 }}>
+                <SectionLabel>{t("version_events_section")}</SectionLabel>
+                {VERSION_EVENTS.map(ev => (
+                  <ToggleRow
+                    key={ev.id}
+                    label={ev.nameKey ? t(ev.nameKey) : ev.name}
+                    sub={`+${ev.jades.toLocaleString()} ✦`}
+                    val={versionEventToggles[ev.id] ?? false}
+                    onChange={() => toggleVersionEvent(ev.id)}
+                  />
+                ))}
+              </div>
+            )}
+
             {customEvents.length > 0 && <div style={{ marginTop: 12 }} />}
             {customEvents.map(ev => (
               <div className="evitem" key={ev.id}>
@@ -988,7 +1258,7 @@ export default function StellarMap() {
           {/* Card: Meta de Pulls */}
           <div className="card goal-card grid-full">
             <div className="card-hd">
-              <span className="card-ico">🎯</span>
+              <img src={require("../imgs/check.webp")} alt="events" style={{ width: 28, marginLeft: 0, verticalAlign: "middle", filter: "drop-shadow(0 0 6px rgba(255, 255, 255, 0.53))" }} />
               <span className="card-ttl">{t("card_goal_title")}</span>
               <span className="card-badge" style={{ color: goalMet ? 'var(--green)' : hasGoal ? 'var(--cyan)' : 'var(--muted)' }}>
                 {goalMet
@@ -1046,7 +1316,12 @@ export default function StellarMap() {
                   <span className="tslider" />
                 </label>
                 <div>
-                  <div className="tlabel">{t("goal_deadline_toggle")}</div>
+                  <div className="tlabel">
+                    <img
+                      src={require("../imgs/calendar.webp")}
+                      alt="events"
+                      style={{ width: 18, marginLeft: 0, verticalAlign: "middle", filter: "drop-shadow(0 0 6px rgba(255, 255, 255, 0.53))" }} />
+                    {t("goal_deadline_toggle")}</div>
                   <div className="tsub">{t("goal_deadline_sub")}</div>
                 </div>
               </div>
@@ -1094,7 +1369,7 @@ export default function StellarMap() {
                 <div className="sum-pill"><span className="mu">{t("pill_express")} </span><span className="cy">{expressQty}×</span></div>
               )}
               <button className="sbtn gold" onClick={async () => {
-                handleSaveMap();
+                await handleSaveMap();
                 if (user) {
                   resetMapState();
                   await sleep(1000);

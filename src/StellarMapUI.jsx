@@ -49,10 +49,13 @@ export const Field = ({ label, children }) => (
 );
 
 // ── Linha com toggle + label + sublabel opcional ─────────────────────────────
-export const ToggleRow = ({ label, sub, val, onChange, extra }) => (
+export const ToggleRow = ({ label, sub, val, onChange, extra, icon }) => (
   <div className="toggle-row">
     <div>
-      <div className="tlabel">{label}</div>
+      <div className="tlabel" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+      {icon && <img src={icon} alt="" style={{ width: 18, verticalAlign: "middle", filter: "drop-shadow(0 0 6px rgba(255, 255, 255, 0.53))" }} />}
+      {label}
+    </div>
       {sub && <div className="tsub">{sub}</div>}
     </div>
     <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
