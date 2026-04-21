@@ -18,7 +18,7 @@ export const T = {
     login_register: "Entrar / Cadastrar",
     logged_as: "Logado como:",
     logout: "Sair",
-    version_tag: "Stellar Map v1.1 · 2026",
+    version_tag: "Stellar Map v1.1.5 · 2026",
     help_btn: "❓ Ajuda",
     logo_sub: "Calculadora de Jades · Honkai: Star Rail",
 
@@ -268,7 +268,7 @@ export const T = {
     login_register: " Login / Register",
     logged_as: "Logged in as:",
     logout: "Sign Out",
-    version_tag: "Stellar Map v1.1 · 2026",
+    version_tag: "Stellar Map v1.1.5 · 2026",
     help_btn: "❓ Help",
     logo_sub: "Jade Calculator · Honkai: Star Rail",
 
@@ -494,7 +494,7 @@ export const T = {
     login_register: " 登录 / 注册",
     logged_as: "已登录：",
     logout: "退出",
-    version_tag: "Stellar Map v1.1 · 2026",
+    version_tag: "Stellar Map v1.1.5 · 2026",
     help_btn: "❓ 帮助",
     logo_sub: "星琼计算器 · 崩坏：星穹铁道",
 
@@ -721,7 +721,7 @@ export const T = {
     login_register: " ログイン / 登録",
     logged_as: "ログイン中：",
     logout: "ログアウト",
-    version_tag: "Stellar Map v1.1 · 2026",
+    version_tag: "Stellar Map v1.1.5 · 2026",
     help_btn: "❓ ヘルプ",
     logo_sub: "星玉電卓 · 崩壊：スターレイル",
 
@@ -947,7 +947,7 @@ export const T = {
     login_register: " เข้าสู่ระบบ / สมัครสมาชิก",
     logged_as: "เข้าสู่ระบบในชื่อ:",
     logout: "ออกจากระบบ",
-    version_tag: "Stellar Map v1.1 · 2026",
+    version_tag: "Stellar Map v1.1.5 · 2026",
     help_btn: "❓ ช่วยเหลือ",
     logo_sub: "เครื่องคำนวณ Jade · Honkai: Star Rail",
 
@@ -1174,7 +1174,7 @@ export const T = {
     login_register: "Login / Registrarse",
     logged_as: "Conectado como:",
     logout: "Salir",
-    version_tag: "Stellar Map v1.1 · 2026",
+    version_tag: "Stellar Map v1.1.5 · 2026",
     help_btn: "❓ Ayuda",
     logo_sub: "Calculadora de Jade · Honkai: Star Rail",
 
