@@ -447,6 +447,11 @@ export const T = {
     star_label: "{label} (0–{max} stars)",
     star_complete: "Max",
 
+    // ── Version Events ──────────────────────────────────────────────────────
+    event_1: "To The Ones That Blaze",
+    event_2: "Cosmic Data Roaming",
+    event_3: "Cosmicon, Roll On Again!",
+
     // ── Past Events ───────────────────────────────────────────────────────────
     past_events: "Event Archive",
     pe_sub: "Past version events that have already ended, and are available for new players, or players who missed the event period.",
@@ -672,6 +677,11 @@ export const T = {
 
     star_label: "{label}（0–{max}星）",
     star_complete: "满星",
+
+    // ── Version Events ──────────────────────────────────────────────────────
+    event_1: "致开拓的你",
+    event_2: "银河信号漫游",
+    event_3: "Cosmicon，再次出发！",
 
     // ── Past Events ───────────────────────────────────────────────────────────
     past_events: "活动档案",
@@ -900,6 +910,10 @@ export const T = {
     star_label: "{label}（0～{max}星）",
     star_complete: "最大",
 
+    event_1: "開拓するあなたへ",
+    event_2: "銀河シグナルローミング",
+    event_3: "コズミコンよ、再び立ち上がれ！",
+
     // ── Past Events ───────────────────────────────────────────────────────────
     past_events: "イベントアーカイブ",
     pe_sub: "すでに終了した過去のイベントで、新規プレイヤーやイベント期間を逃してしまったプレイヤーが参加できるもの。",
@@ -1125,6 +1139,10 @@ export const T = {
 
     star_label: "{label} (0–{max} ดาว)",
     star_complete: "สูงสุด",
+
+    event_1: "แด่คุณผู้บุกเบิก",
+    event_2: "โรมมิ่งกาแล็กซี",
+    event_3: "คอสมิคอน โรลออน แอนแกน!",
 
     // ── Past Events ───────────────────────────────────────────────────────────
     past_events: "แฟ้มกิจกรรม",
@@ -1352,6 +1370,10 @@ export const T = {
 
     star_label: "{label} (0–{max} estrellas)",
     star_complete: "Completar",
+
+    event_1: "Para ti, Trazacaminos",
+    event_2: "Roaming de datos cósmico",
+    event_3: "¡Cosmicon, sigue adelante!",
 
     // ── Past Events ───────────────────────────────────────────────────────────
     past_events: "Archivo de eventos",
