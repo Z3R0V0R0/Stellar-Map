@@ -205,6 +205,13 @@ export default function StellarMap() {
     return "var(--green)";
   };
 
+  const mapCountColor = (count) => {
+    if (count <= 2) return "var(--green)";
+    if (count === 3) return "var(--gold)";
+    if (count === 4) return "#FFA94D";
+    return "var(--red)";
+  };
+
   const deadlineLabel = (days) => {
     if (days === null) return null;
     if (days <= 0) return t("deadline_expired");
@@ -233,6 +240,10 @@ export default function StellarMap() {
       pastEventToggles,
       customPastEvents,
     };
+    if (!currentMapId && maps.length >= 5) {
+      showToast("Limite de 5 mapas atingido!", "error");
+      return;
+    }
     if (currentMapId) {
       await supabase.from("maps").update({ name: mapName, data: payload }).eq("id", currentMapId);
     } else {
@@ -692,7 +703,14 @@ export default function StellarMap() {
         <div className="rel create-wrap">
           <div className="create-box">
             <div className="create-title">{t("my_maps")}</div>
-
+            <div style={{
+              textAlign: "center", marginBottom: 16,
+              fontFamily: "'Orbitron', sans-serif", fontSize: 13,
+              fontWeight: 700, letterSpacing: 2,
+              color: mapCountColor(maps.length),
+            }}>
+              {maps.length} / 5
+            </div>
             {list.length === 0 && (
               <div style={{ color: "var(--muted)" }}>{t("no_maps")}</div>
             )}
@@ -1088,7 +1106,7 @@ export default function StellarMap() {
                   : t("hoyolab_checkin_sub")}
                 val={hoyolabCheckin}
                 onChange={setHoyolabCheckin}
-                icon={require("../imgs/calendar.webp")} 
+                icon={require("../imgs/calendar.webp")}
               />
               {hoyolabCheckin && !useCalendar && (
                 <InfoBox>
@@ -1366,6 +1384,16 @@ export default function StellarMap() {
               )}
               {expressPass && (
                 <div className="sum-pill"><span className="mu">{t("pill_express")} </span><span className="cy">{expressQty}×</span></div>
+              )}
+              {user && (
+                <div className="sum-pill" style={{
+                  fontFamily: "'Orbitron', sans-serif",
+                  fontSize: 13, fontWeight: 700,
+                  color: mapCountColor(maps.length),
+                  borderColor: mapCountColor(maps.length) + "44",
+                }}>
+                  {maps.length} / 5
+                </div>
               )}
               <button className="sbtn gold" onClick={async () => {
                 await handleSaveMap();
