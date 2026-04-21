@@ -1,7 +1,7 @@
 {
   "name": "stellarmap",
-  "version": "0.1.0",
-  "homepage": "https://z3r0v0r0.github.io/Stellar-Map/",
+  "version": "1.1.5",
+  "homepage": ".",
   "private": true,
   "dependencies": {
     "@supabase/supabase-js": "^2.103.0",
