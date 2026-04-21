@@ -163,7 +163,6 @@ export default function StellarMap() {
   const [displayMaps, setDisplayMaps] = useState([]);
   const [dragIdx, setDragIdx] = useState(null);
   const [dragOverIdx, setDragOverIdx] = useState(null);
-
   const fetchMaps = useCallback(async (userId) => {
     if (!userId) return;
     const { data, error } = await supabase
