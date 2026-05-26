@@ -18,7 +18,7 @@ export const T = {
     login_register: "Entrar / Cadastrar",
     logged_as: "Logado como:",
     logout: "Sair",
-    version_tag: "Stellar Map v1.1.5 · 2026",
+    version_tag: "Stellar Map v1.1.6 · 2026",
     help_btn: "❓ Ajuda",
     logo_sub: "Calculadora de Jades · Honkai: Star Rail",
 
@@ -220,6 +220,8 @@ export const T = {
     event_1: "Aos que Desbravam",
     event_2: "Roaming de Dados Cósmicos",
     event_3: "Cosmicombate! Que Rolem os Dados de Novo!",
+    event_4: "【4.3】- Combate dos Aviões Pixelados",
+    event_5: "【4.3】- Parque de Diversões das Poeirinhas",
 
     // ── Eventos Passados ──────────────────────────────────────────────────────
     past_events: "Arquivo de Eventos",
@@ -268,7 +270,7 @@ export const T = {
     login_register: " Login / Register",
     logged_as: "Logged in as:",
     logout: "Sign Out",
-    version_tag: "Stellar Map v1.1.5 · 2026",
+    version_tag: "Stellar Map v1.1.6 · 2026",
     help_btn: "❓ Help",
     logo_sub: "Jade Calculator · Honkai: Star Rail",
 
@@ -451,6 +453,8 @@ export const T = {
     event_1: "To The Ones That Blaze",
     event_2: "Cosmic Data Roaming",
     event_3: "Cosmicon, Roll On Again!",
+    event_4: "【4.3】- Pixel Plane Rumble",
+    event_5: "【4.3】- Wispae Amusement Park",
 
     // ── Past Events ───────────────────────────────────────────────────────────
     past_events: "Event Archive",
@@ -499,7 +503,7 @@ export const T = {
     login_register: " 登录 / 注册",
     logged_as: "已登录：",
     logout: "退出",
-    version_tag: "Stellar Map v1.1.5 · 2026",
+    version_tag: "Stellar Map v1.1.6 · 2026",
     help_btn: "❓ 帮助",
     logo_sub: "星琼计算器 · 崩坏：星穹铁道",
 
@@ -682,6 +686,8 @@ export const T = {
     event_1: "致开拓的你",
     event_2: "银河信号漫游",
     event_3: "Cosmicon，再次出发！",
+    event_4: "【4.3】- 像素飞机大乱斗",
+    event_5: "【4.3】- 尘灵游乐园",
 
     // ── Past Events ───────────────────────────────────────────────────────────
     past_events: "活动档案",
@@ -731,7 +737,7 @@ export const T = {
     login_register: " ログイン / 登録",
     logged_as: "ログイン中：",
     logout: "ログアウト",
-    version_tag: "Stellar Map v1.1.5 · 2026",
+    version_tag: "Stellar Map v1.1.6 · 2026",
     help_btn: "❓ ヘルプ",
     logo_sub: "星玉電卓 · 崩壊：スターレイル",
 
@@ -913,6 +919,8 @@ export const T = {
     event_1: "開拓するあなたへ",
     event_2: "銀河シグナルローミング",
     event_3: "コズミコンよ、再び立ち上がれ！",
+    event_4: "【4.3】- ドット絵飛行機ウォーズ",
+    event_5: "【4.3】- 初ランド",
 
     // ── Past Events ───────────────────────────────────────────────────────────
     past_events: "イベントアーカイブ",
@@ -961,7 +969,7 @@ export const T = {
     login_register: " เข้าสู่ระบบ / สมัครสมาชิก",
     logged_as: "เข้าสู่ระบบในชื่อ:",
     logout: "ออกจากระบบ",
-    version_tag: "Stellar Map v1.1.5 · 2026",
+    version_tag: "Stellar Map v1.1.6 · 2026",
     help_btn: "❓ ช่วยเหลือ",
     logo_sub: "เครื่องคำนวณ Jade · Honkai: Star Rail",
 
@@ -1192,7 +1200,7 @@ export const T = {
     login_register: "Login / Registrarse",
     logged_as: "Conectado como:",
     logout: "Salir",
-    version_tag: "Stellar Map v1.1.5 · 2026",
+    version_tag: "Stellar Map v1.1.6 · 2026",
     help_btn: "❓ Ayuda",
     logo_sub: "Calculadora de Jade · Honkai: Star Rail",
 
@@ -1374,6 +1382,8 @@ export const T = {
     event_1: "Para ti, Trazacaminos",
     event_2: "Roaming de datos cósmico",
     event_3: "¡Cosmicon, sigue adelante!",
+    event_4: "【4.3】- Batalla de aviones pixelados",
+    event_5: "【4.3】- Parque de diversiones de eterae",
 
     // ── Past Events ───────────────────────────────────────────────────────────
     past_events: "Archivo de eventos",

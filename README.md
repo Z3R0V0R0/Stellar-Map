@@ -1,4 +1,4 @@
-# Stellar-Map-v1.1.5
+# Stellar-Map-v1.1.6
 - Calculadora de Jades, Stellar Map. Feito para jogadores do Honkai: Star Rail criarem mapas de planejamento para organizar metas, e calcular seus tiros.
 
 # 📖 Guia · Stellar Map",
