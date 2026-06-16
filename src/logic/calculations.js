@@ -66,9 +66,6 @@ export function addDays(dateStr, n) {
 }
 
 // ── Hoyolab Check-in ─────────────────────────────────────────────────────────
-// Conta quantas vezes os dias 5, 13 e 20 de cada mês caem no intervalo
-// [startDate, endDate). Cada ocorrência vale 20 jades.
-// Funciona corretamente mesmo para intervalos de vários meses ou mais de 1 ano.
 export function calcHoyolabCheckins(startDateStr, endDateStr) {
   const start = new Date(startDateStr + "T00:00:00");
   const end   = new Date(endDateStr   + "T00:00:00");
@@ -78,7 +75,6 @@ export function calcHoyolabCheckins(startDateStr, endDateStr) {
   const CHECKIN_DAYS = [5, 13, 20];
   let count = 0;
 
-  // Itera mês a mês desde o mês de start até o mês de end
   const cur = new Date(start.getFullYear(), start.getMonth(), 1);
   const endMonth = new Date(end.getFullYear(), end.getMonth(), 1);
 
@@ -88,7 +84,6 @@ export function calcHoyolabCheckins(startDateStr, endDateStr) {
 
     for (const day of CHECKIN_DAYS) {
       const candidate = new Date(year, month, day);
-      // Conta se a data candidata está dentro de [start, end)
       if (candidate >= start && candidate < end) {
         count++;
       }
@@ -112,6 +107,9 @@ export function calcTotalJades({
   mocStars,
   pfStars,
   apocStars,
+
+  // 🌟 Modo Estelar
+  starwardMode,
 
   // 💠 Passes e extras
   battlePass,
@@ -138,7 +136,7 @@ export function calcTotalJades({
   pastEventJades,
   hoyolabCheckinJades,
 
-  //   Calendário (opcionais — se ausentes, usa versionDays)
+  // Calendário (opcionais — se ausentes, usa versionDays)
   startDate,
   endDate,
 }) {
@@ -163,6 +161,11 @@ export function calcTotalJades({
   total += calcPFJades(pfStars     ?? 0);
   total += calcApocJades(apocStars ?? 0);
 
+  // ── 🌟 Modo Estelar (+100 jades por endgame ativado, se tiver pelo menos 1 estrela) ──
+  if (starwardMode?.moc  && (mocStars  ?? 0) > 0) total += 100;
+  if (starwardMode?.pf   && (pfStars   ?? 0) > 0) total += 100;
+  if (starwardMode?.apoc && (apocStars ?? 0) > 0) total += 100;
+
   // ── 💠 Passes e conversão ──
   if (battlePass)       total += 680 + (5 * PULL_COST);
   if (bpMedal)          total += 200;
@@ -173,7 +176,6 @@ export function calcTotalJades({
   if (duNewCycle) total += 3500;
   total += (duLevelCount ?? 0) * 120;
   if (cwNewCycle) total += 540;
-
 
   // ── Eventos ──
   (customEvents ?? []).forEach(ev => { total += ev.jades; });
@@ -239,7 +241,7 @@ export function calcMoCJades(stars) {
 export function calcPFJades(stars) {
   if (stars <= 0) return 0;
   let jades = 0;
-  for (let i = 1; i <= stars; i++) {
+  for (let i = 1; i <= stars; i++) {  
     jades += i <= 8 ? 60 : 80;
   }
   return jades;

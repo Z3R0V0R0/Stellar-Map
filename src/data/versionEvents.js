@@ -23,10 +23,6 @@ export const VERSION_EVENTS = [
   //
 { id: "event4", nameKey: "event_4",   jades: 1240, enabled: false },
 { id: "event5", nameKey: "event_5",   jades: 500, enabled: false },
-{ id: "event1", nameKey: "event_1", jades: 1600, enabled: false },
-{ id: "event2", nameKey: "event_2",   jades: 1000, enabled: false },
-{ id: "event3", nameKey: "event_3",   jades: 1020, enabled: false },
-
 
 ];
 
@@ -59,5 +55,7 @@ export const PAST_EVENTS = [
   { id: "pe26", nameKey: "amphoreus_6",jades: 150, enabled: false },
   { id: "pe27", nameKey: "amphoreus_7",jades: 250, enabled: false },
   { id: "pe28", nameKey: "planarcadia_1",jades: 240, enabled: false },
+  { id: "pe29", nameKey: "planarcadia_2",   jades: 180, enabled: false },
+  { id: "pe30", nameKey: "planarcadia_3",   jades: 280, enabled: false },
 ];
  

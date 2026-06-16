@@ -227,6 +227,8 @@ export default function StellarMap() {
       manualFragments, convertFragments,
       battlePass, bpMedal,
       mocStars, pfStars, apocStars,
+      // ── 🌟 Modo Estelar ──
+      starwardMode,
       du, duNewCycle, duLevelCount, cwNewCycle,
       customEvents,
       anniversary, anniversaryJades,
@@ -275,6 +277,8 @@ export default function StellarMap() {
     setManualFragments(0); setConvertFragments(0);
     setBattlePass(false); setBpMedal(false);
     setMocStars(0); setPfStars(0); setApocStars(0);
+    // ── 🌟 Modo Estelar ──
+    setstarwardMode({ moc: false, pf: false, apoc: false });
     setDu(false);
     setDuNewCycle(false);
     setDuLevelCount(0);
@@ -313,6 +317,8 @@ export default function StellarMap() {
     setManualFragments(safe(d.manualFragments)); setConvertFragments(safe(d.convertFragments));
     setBattlePass(!!d.battlePass); setBpMedal(!!d.bpMedal);
     setMocStars(safe(d.mocStars)); setPfStars(safe(d.pfStars)); setApocStars(safe(d.apocStars));
+    // ── 🌟 Modo Estelar ──
+    setstarwardMode(d.starwardMode ?? { moc: false, pf: false, apoc: false });
     setDu(!!d.du);
     setDuNewCycle(!!d.duNewCycle);
     setDuLevelCount(safe(d.duLevelCount));
@@ -444,6 +450,9 @@ export default function StellarMap() {
   const [pfStars, setPfStars] = useState(0);
   const [apocStars, setApocStars] = useState(0);
 
+  // ── 🌟 Modo Estelar ──
+  const [starwardMode, setstarwardMode] = useState({ moc: false, pf: false, apoc: false });
+
   // ── Universo Divergente ──
   const [du, setDu] = useState(false);
   const [duNewCycle, setDuNewCycle] = useState(false);
@@ -522,6 +531,8 @@ export default function StellarMap() {
       expressPass, expressQty,
       odyssey,
       mocStars, pfStars, apocStars,
+      // ── 🌟 Modo Estelar ──
+      starwardMode,
       battlePass, bpMedal,
       convertFragments: safeConvert,
       initialJades, initialPasses,
@@ -539,7 +550,10 @@ export default function StellarMap() {
     }),
     [
       activeDays, dailyJades, expressPass, expressQty, odyssey,
-      mocStars, pfStars, apocStars, battlePass, bpMedal,
+      mocStars, pfStars, apocStars,
+      // ── 🌟 Modo Estelar ──
+      starwardMode,
+      battlePass, bpMedal,
       safeConvert, initialJades, initialPasses,
       du, duNewCycle, duLevelCount, cwNewCycle,
       customEvents, anniversary, anniversaryJades,
@@ -590,7 +604,8 @@ export default function StellarMap() {
 
   // ── StarController ──
   const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
-  const StarController = ({ label, value, setValue, max }) => {
+
+  const StarController = ({ label, value, setValue, max, stellarOn, onStellarToggle }) => {
     const add = (n) => setValue(v => clamp(v + n, 0, max));
     const sub = (n) => setValue(v => clamp(v - n, 0, max));
     const isMax = value >= max;
@@ -599,12 +614,30 @@ export default function StellarMap() {
       <Field label={t("star_label", { label, max })}>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <div style={{ fontSize: 18, fontWeight: 600 }}>✦ {value} / {max}</div>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
             <button disabled={isMin} onClick={() => sub(3)} className="sbtn ghost">-3</button>
             <button disabled={isMin} onClick={() => sub(1)} className="sbtn ghost">-1</button>
             <button disabled={isMax} onClick={() => add(1)} className="sbtn cy">+1</button>
             <button disabled={isMax} onClick={() => add(3)} className="sbtn cy">+3</button>
             <button disabled={isMax} onClick={() => setValue(max)} className="sbtn gold">{t("star_complete")}</button>
+          </div>
+          {/* ── 🌟 Toggle Modo Estelar ── */}
+          <div
+            onClick={() => onStellarToggle(!stellarOn)}
+            className={`stellar-toggle-wrap${stellarOn ? " stellar-on" : ""}`}
+          >
+            <label className="tgl" onClick={e => e.stopPropagation()}>
+              <input
+                type="checkbox"
+                checked={stellarOn}
+                onChange={e => onStellarToggle(e.target.checked)}
+              />
+              <span className="tslider" />
+            </label>
+            <span className="stellar-toggle-label">
+              {t("starward_mode")}
+              <span className="stellar-bonus">+100 ✦</span>
+            </span>
           </div>
         </div>
       </Field>
@@ -1001,12 +1034,47 @@ export default function StellarMap() {
             <p style={{ fontSize: 12, color: 'var(--muted)', marginBottom: 12 }}>
               {t("endgame_sub")}
             </p>
-            <StarController label={t("moc")} value={mocStars} setValue={setMocStars} max={36} />
-            <StarController label={t("pf")} value={pfStars} setValue={setPfStars} max={12} />
-            <StarController label={t("apoc")} value={apocStars} setValue={setApocStars} max={12} />
+
+            {/* ── MoC ── */}
+            <StarController
+              label={t("moc")}
+              value={mocStars}
+              setValue={setMocStars}
+              max={36}
+              stellarOn={starwardMode.moc}
+              onStellarToggle={v => setstarwardMode(p => ({ ...p, moc: v }))}
+            />
+
+            {/* ── PF ── */}
+            <StarController
+              label={t("pf")}
+              value={pfStars}
+              setValue={setPfStars}
+              max={12}
+              stellarOn={starwardMode.pf}
+              onStellarToggle={v => setstarwardMode(p => ({ ...p, pf: v }))}
+            />
+
+            {/* ── Apoc ── */}
+            <StarController
+              label={t("apoc")}
+              value={apocStars}
+              setValue={setApocStars}
+              max={12}
+              stellarOn={starwardMode.apoc}
+              onStellarToggle={v => setstarwardMode(p => ({ ...p, apoc: v }))}
+            />
+
             <InfoBox style={{ marginTop: 12 }}>
               <span className="mu">{t("endgame_total")} </span>
-              <span className="cy">{Math.floor(subtotalEndgamesStars({ mocStars, pfStars, apocStars }))} ✦</span>
+              <span className="cy">
+                {Math.floor(
+                  subtotalEndgamesStars({ mocStars, pfStars, apocStars })
+                  + (starwardMode.moc  && mocStars  > 0 ? 100 : 0)
+                  + (starwardMode.pf   && pfStars   > 0 ? 100 : 0)
+                  + (starwardMode.apoc && apocStars > 0 ? 100 : 0)
+                )} ✦
+              </span>
             </InfoBox>
           </div>
 
@@ -1071,8 +1139,6 @@ export default function StellarMap() {
                 </InfoBox>
               )}
             </div>
-
-
           </div>
 
           {/* Card: Reset Mensal + Trials */}

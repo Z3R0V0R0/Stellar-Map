@@ -18,7 +18,7 @@ export const T = {
     login_register: "Entrar / Cadastrar",
     logged_as: "Logado como:",
     logout: "Sair",
-    version_tag: "Stellar Map v1.1.6 · 2026",
+    version_tag: "Stellar Map v1.1.9 · 2026",
     help_btn: "❓ Ajuda",
     logo_sub: "Calculadora de Jades · Honkai: Star Rail",
 
@@ -130,6 +130,7 @@ export const T = {
     pf: "Pura Ficção (PF)",
     apoc: "Sombra Apocalíptica (AS)",
     endgame_total: "Total de Jades de Endgame:",
+    starward_mode: "Modo Estelar",
 
     // ── Card: DU + Odyssey ───────────────────────────────────────────────────
     card_du_title: "Universo Divergente",
@@ -219,7 +220,7 @@ export const T = {
     // ── Eventos de Versão ──────────────────────────────────────────────────────
     event_1: "Aos que Desbravam",
     event_2: "Roaming de Dados Cósmicos",
-    event_3: "Cosmicombate! Que Rolem os Dados de Novo!",
+    planarcadia_3: "Cosmicombate! Que Rolem os Dados de Novo!",
     event_4: "【4.3】- Combate dos Aviões Pixelados",
     event_5: "【4.3】- Parque de Diversões das Poeirinhas",
 
@@ -270,7 +271,7 @@ export const T = {
     login_register: " Login / Register",
     logged_as: "Logged in as:",
     logout: "Sign Out",
-    version_tag: "Stellar Map v1.1.6 · 2026",
+    version_tag: "Stellar Map v1.1.9 · 2026",
     help_btn: "❓ Help",
     logo_sub: "Jade Calculator · Honkai: Star Rail",
 
@@ -370,6 +371,7 @@ export const T = {
     pf: "Pure Fiction (PF)",
     apoc: "Apocalyptic Shadow (AS)",
     endgame_total: "Total Endgame Jades:",
+    starward_mode: "Starward Mode",
 
     card_du_title: "Divergent Universe",
     du_toggle_label: "Divergent Universe / Currency Wars",
@@ -452,7 +454,7 @@ export const T = {
     // ── Version Events ──────────────────────────────────────────────────────
     event_1: "To The Ones That Blaze",
     event_2: "Cosmic Data Roaming",
-    event_3: "Cosmicon, Roll On Again!",
+    planarcadia_3: "Cosmicon, Roll On Again!",
     event_4: "【4.3】- Pixel Plane Rumble",
     event_5: "【4.3】- Wispae Amusement Park",
 
@@ -503,7 +505,7 @@ export const T = {
     login_register: " 登录 / 注册",
     logged_as: "已登录：",
     logout: "退出",
-    version_tag: "Stellar Map v1.1.6 · 2026",
+    version_tag: "Stellar Map v1.1.9 · 2026",
     help_btn: "❓ 帮助",
     logo_sub: "星琼计算器 · 崩坏：星穹铁道",
 
@@ -603,6 +605,7 @@ export const T = {
     pf: "虚构叙事（虚构）",
     apoc: "末日幻影（末日）",
     endgame_total: "常驻挑战星琼合计：",
+    starward_mode: "星拓模式",
 
     card_du_title: "差分宇宙",
     du_toggle_label: "差分宇宙 / 金币战争",
@@ -685,7 +688,7 @@ export const T = {
     // ── Version Events ──────────────────────────────────────────────────────
     event_1: "致开拓的你",
     event_2: "银河信号漫游",
-    event_3: "Cosmicon，再次出发！",
+    planarcadia_3: "Cosmicon，再次出发！",
     event_4: "【4.3】- 像素飞机大乱斗",
     event_5: "【4.3】- 尘灵游乐园",
 
@@ -737,7 +740,7 @@ export const T = {
     login_register: " ログイン / 登録",
     logged_as: "ログイン中：",
     logout: "ログアウト",
-    version_tag: "Stellar Map v1.1.6 · 2026",
+    version_tag: "Stellar Map v1.1.9 · 2026",
     help_btn: "❓ ヘルプ",
     logo_sub: "星玉電卓 · 崩壊：スターレイル",
 
@@ -837,6 +840,7 @@ export const T = {
     pf: "虚構叙事（虚構）",
     apoc: "末日の幻影（終末）",
     endgame_total: "エンドゲーム星玉合計：",
+    starward_mode: "星拓きモード",
 
     card_du_title: "階差宇宙",
     du_toggle_label: "階差宇宙 / マネーウォーズ",
@@ -918,7 +922,7 @@ export const T = {
 
     event_1: "開拓するあなたへ",
     event_2: "銀河シグナルローミング",
-    event_3: "コズミコンよ、再び立ち上がれ！",
+    planarcadia_3: "コズミコンよ、再び立ち上がれ！",
     event_4: "【4.3】- ドット絵飛行機ウォーズ",
     event_5: "【4.3】- 初ランド",
 
@@ -969,7 +973,7 @@ export const T = {
     login_register: " เข้าสู่ระบบ / สมัครสมาชิก",
     logged_as: "เข้าสู่ระบบในชื่อ:",
     logout: "ออกจากระบบ",
-    version_tag: "Stellar Map v1.1.6 · 2026",
+    version_tag: "Stellar Map v1.1.9 · 2026",
     help_btn: "❓ ช่วยเหลือ",
     logo_sub: "เครื่องคำนวณ Jade · Honkai: Star Rail",
 
@@ -1069,6 +1073,7 @@ export const T = {
     pf: "Pure Fiction (PF)",
     apoc: "Apocalyptic Shadow (AS)",
     endgame_total: "Jade รวมจากโหมดท้าทาย: ",
+    starward_mode: "โหมด Starward",
 
     card_du_title: "จักรวาลต่างมิติ",
     du_toggle_label: "จักรวาลต่างมิติ / สงครามเงินตรา",
@@ -1150,7 +1155,7 @@ export const T = {
 
     event_1: "แด่คุณผู้บุกเบิก",
     event_2: "โรมมิ่งกาแล็กซี",
-    event_3: "คอสมิคอน โรลออน แอนแกน!",
+    planarcadia_3: "คอสมิคอน โรลออน แอนแกน!",
 
     // ── Past Events ───────────────────────────────────────────────────────────
     past_events: "แฟ้มกิจกรรม",
@@ -1200,7 +1205,7 @@ export const T = {
     login_register: "Login / Registrarse",
     logged_as: "Conectado como:",
     logout: "Salir",
-    version_tag: "Stellar Map v1.1.6 · 2026",
+    version_tag: "Stellar Map v1.1.9 · 2026",
     help_btn: "❓ Ayuda",
     logo_sub: "Calculadora de Jade · Honkai: Star Rail",
 
@@ -1300,6 +1305,7 @@ export const T = {
     pf: "Pura ficción (PF)",
     apoc: "Sombra apocalíptica (SA)",
     endgame_total: "Total de Jade de modos permanentes: ",
+    starward_mode: "Modo Starward",
 
     card_du_title: "Universo Diferenciado",
     du_toggle_label: "Universo Diferenciado / Guerra de Divisas",
@@ -1379,9 +1385,7 @@ export const T = {
     star_label: "{label} (0–{max} estrellas)",
     star_complete: "Completar",
 
-    event_1: "Para ti, Trazacaminos",
-    event_2: "Roaming de datos cósmico",
-    event_3: "¡Cosmicon, sigue adelante!",
+    planarcadia_3: "¡Cosmicon, sigue adelante!",
     event_4: "【4.3】- Batalla de aviones pixelados",
     event_5: "【4.3】- Parque de diversiones de eterae",
 
