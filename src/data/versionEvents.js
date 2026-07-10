@@ -21,8 +21,11 @@ export const VERSION_EVENTS = [
   // ── Versão atual ────────────────────────────────────────────────────────────
   // Descomente ou adicione eventos conforme a versão em andamento.
   //
+{ id: "eventCollab", nameKey: "eventCollab",   jades: 1650, enabled: false },
+{ id: "event1", nameKey: "event_1",   jades: 900, enabled: false },
 { id: "event4", nameKey: "event_4",   jades: 1240, enabled: false },
 { id: "event5", nameKey: "event_5",   jades: 500, enabled: false },
+
 
 ];
 

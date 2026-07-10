@@ -1135,7 +1135,7 @@ export default function StellarMap() {
               />
               {cwNewCycle && (
                 <InfoBox>
-                  <span className="cy">540 ✦</span>
+                  <span className="cy">520 ✦</span>
                 </InfoBox>
               )}
             </div>

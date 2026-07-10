@@ -175,7 +175,7 @@ export function calcTotalJades({
   if (du)         total += 225 * weeks;
   if (duNewCycle) total += 3500;
   total += (duLevelCount ?? 0) * 120;
-  if (cwNewCycle) total += 540;
+  if (cwNewCycle) total += 520;
 
   // ── Eventos ──
   (customEvents ?? []).forEach(ev => { total += ev.jades; });

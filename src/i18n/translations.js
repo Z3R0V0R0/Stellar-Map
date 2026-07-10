@@ -153,7 +153,7 @@ export const T = {
     maintenance_sub: "+600 jades (compensação de manutenção)",
     version_events_section: "Eventos da Versão",
     stat_duration: "Período",
-    cw_new_cycle_toggle: "Novas Expansão: Versão 4.2",
+    cw_new_cycle_toggle: "Novas Expansão: Versão 4.4.",
     cw_new_cycle_sub: "Aumento de Jades por Expansão",
 
     // ── Card: Monthly Reset ──────────────────────────────────────────────────
@@ -218,11 +218,10 @@ export const T = {
     star_complete: "Completar",
 
     // ── Eventos de Versão ──────────────────────────────────────────────────────
-    event_1: "Aos que Desbravam",
-    event_2: "Roaming de Dados Cósmicos",
-    planarcadia_3: "Cosmicombate! Que Rolem os Dados de Novo!",
-    event_4: "【4.3】- Combate dos Aviões Pixelados",
-    event_5: "【4.3】- Parque de Diversões das Poeirinhas",
+    event_4: " - Combate dos Aviões Pixelados",
+    event_5: " - Parque de Diversões das Poeirinhas",
+    eventCollab: "【Collab 4.4】- Fate/Star Rail Night",
+    event_1: "【4.4】Demolidor Anticorrupção",
 
     // ── Eventos Passados ──────────────────────────────────────────────────────
     past_events: "Arquivo de Eventos",
@@ -393,7 +392,7 @@ export const T = {
     maintenance_sub: "+600 Jade (maintenance compensation)",
     version_events_section: "Version Events",
     stat_duration: "Period",
-    cw_new_cycle_toggle: "New Expansion: Version 4.2",
+    cw_new_cycle_toggle: "New Expansion: Version 4.4.",
     cw_new_cycle_sub: "Jade Increase per Expansion",
 
     card_monthly_title: "Monthly Reset & Character Trials",
@@ -452,11 +451,10 @@ export const T = {
     star_complete: "Max",
 
     // ── Version Events ──────────────────────────────────────────────────────
-    event_1: "To The Ones That Blaze",
-    event_2: "Cosmic Data Roaming",
-    planarcadia_3: "Cosmicon, Roll On Again!",
-    event_4: "【4.3】- Pixel Plane Rumble",
-    event_5: "【4.3】- Wispae Amusement Park",
+    event_4: " - Pixel Plane Rumble",
+    event_5: " - Wispae Amusement Park",
+    eventCollab: "【Collab 4.4】- Fate/Star Rail Night",
+    event_1: "【4.4】Antigraft Brickbuster",
 
     // ── Past Events ───────────────────────────────────────────────────────────
     past_events: "Event Archive",
@@ -627,7 +625,7 @@ export const T = {
     maintenance_sub: "+600星琼（维护补偿）",
     version_events_section: "版本活动",
     stat_duration: "周期",
-    cw_new_cycle_toggle: "全新扩展：4.2版本",
+    cw_new_cycle_toggle: "全新扩展：4.4.版本",
     cw_new_cycle_sub: "每次扩展星琼增加",
 
     card_monthly_title: "每月重置 & 角色试用",
@@ -686,11 +684,10 @@ export const T = {
     star_complete: "满星",
 
     // ── Version Events ──────────────────────────────────────────────────────
-    event_1: "致开拓的你",
-    event_2: "银河信号漫游",
-    planarcadia_3: "Cosmicon，再次出发！",
-    event_4: "【4.3】- 像素飞机大乱斗",
-    event_5: "【4.3】- 尘灵游乐园",
+    event_4: " - 像素飞机大乱斗",
+    event_5: " - 尘灵游乐园",
+    eventCollab: "【コラボ 4.4】- Fate / 銀河鉄道の夜",
+    event_1: "【4.4】反汚職ブロフェッショナル",
 
     // ── Past Events ───────────────────────────────────────────────────────────
     past_events: "活动档案",
@@ -862,7 +859,7 @@ export const T = {
     maintenance_sub: "+600星玉（メンテナンス補償）",
     version_events_section: "バージョンイベント",
     stat_duration: "期間",
-    cw_new_cycle_toggle: "新規拡張：バージョン4.2",
+    cw_new_cycle_toggle: "新規拡張：バージョン4.4.",
     cw_new_cycle_sub: "拡張ごとの星玉増加量",
 
     card_monthly_title: "月次リセット & キャラクター試用",
@@ -920,11 +917,10 @@ export const T = {
     star_label: "{label}（0～{max}星）",
     star_complete: "最大",
 
-    event_1: "開拓するあなたへ",
-    event_2: "銀河シグナルローミング",
-    planarcadia_3: "コズミコンよ、再び立ち上がれ！",
-    event_4: "【4.3】- ドット絵飛行機ウォーズ",
-    event_5: "【4.3】- 初ランド",
+    event_4: " - ドット絵飛行機ウォーズ",
+    event_5: " - 初ランド",
+    eventCollab: "【合作 4.4】- 命运/银河铁道之夜",
+    event_1: "【4.4】反贪「砖」家",
 
     // ── Past Events ───────────────────────────────────────────────────────────
     past_events: "イベントアーカイブ",
@@ -1095,7 +1091,7 @@ export const T = {
     maintenance_sub: "+600 Jade (ชดเชยการบำรุงรักษา)",
     version_events_section: "กิจกรรมของเวอร์ชัน",
     stat_duration: "ช่วงเวลา",
-    cw_new_cycle_toggle: "ส่วนขยายใหม่: เวอร์ชัน 4.2",
+    cw_new_cycle_toggle: "ส่วนขยายใหม่: เวอร์ชัน 4.4.",
     cw_new_cycle_sub: "Jade ที่เพิ่มขึ้นต่อส่วนขยาย",
 
     card_monthly_title: "รีเซ็ตรายเดือน & ทดลองใช้ตัวละคร",
@@ -1327,7 +1323,7 @@ export const T = {
     maintenance_sub: "+600 Jade (compensación de mantenimiento)",
     version_events_section: "Eventos de la Versión",
     stat_duration: "Período",
-    cw_new_cycle_toggle: "Nueva expansión: Versión 4.2",
+    cw_new_cycle_toggle: "Nueva expansión: Versión 4.4.",
     cw_new_cycle_sub: "Aumento de Jade por expansión",
 
     card_monthly_title: "Reinicio Mensual & Prueba de Personajes",
@@ -1385,9 +1381,10 @@ export const T = {
     star_label: "{label} (0–{max} estrellas)",
     star_complete: "Completar",
 
-    planarcadia_3: "¡Cosmicon, sigue adelante!",
-    event_4: "【4.3】- Batalla de aviones pixelados",
-    event_5: "【4.3】- Parque de diversiones de eterae",
+    event_4: "Batalla de aviones pixelados",
+    event_5: "Parque de diversiones de eterae",
+    eventCollab: "【Colaboración 4.4】- Noche de Fate/Star Rail",
+    event_1: "【4.4】Experto del ladrillo anticorrupción",
 
     // ── Past Events ───────────────────────────────────────────────────────────
     past_events: "Archivo de eventos",
